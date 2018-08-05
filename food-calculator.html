@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>jQuery Calculator</title>
+
+  <!-- Added link to the jQuery Library -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+  <!-- Added a link to Bootstrap-->
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <link rel="stylesheet" href="style.css">
+
+</head>
+<body>
+
+  <div class="jumbotron">
+    <h1 class="text-center">Food Weight Converter</h1>
+    <h3 class="text-center">Convert food measurements to grams!</h3>
+  </div>
+
+  <div class="container">
+
+    <div class="row">
+
+      <!-- Calculator Panel -->
+      <div class="col-lg-4">
+        <div class="card">
+          <h3 class="card-header">Calculator</h3>
+
+          <div class="card-body">
+            <button id="button-tigernut-flour" class="btn btn-info ingredient" value="112"><h7>Tigernut<br>Flour</h7></button>
+            <button id="button-coconut-oil" class="btn btn-info ingredient" value="200"><h7>Coconut<br>Oil</h7></button>
+            <button id="button-coconut-sugar" class="btn btn-info ingredient" value="150"><h7>Coconut<br>Sugar</h7></button>
+            <button id="button-cocoa-powder" class="btn btn-info ingredient" value="100"><h7>Cocoa<br>Powder</h7></button>
+            <br><br>
+            <button id="button-maple-syrup" class="btn btn-info ingredient" value="300"><h7>Maple<br>Syrup</h7></button>
+            <button id="button-honey" class="btn btn-info ingredient" value="340"><h7>Honey</h7></button>
+            <button id="button-cassava-flour" class="btn btn-info ingredient" value="120"><h7>Cassava<br>Flour</h7></button>
+            <button id="button-chickpea-flour" class="btn btn-info ingredient" value="120"><h7>Chickpea<br>Flour</h7></button>
+            <br><br>
+            <button id="button-cups" class="btn btn-secondary measurement" value="1"><h5>Cups</h5></button>
+            <button id="button-tablespoons" class="btn btn-secondary measurement" value="16"><h5>Tbsp</h5></button>
+            <button id="button-teaspoons" class="btn btn-secondary measurement" value="48"><h5>Tsp</h5></button>
+            <button id="button-grams" class="btn btn-secondary measurement" value="1"><h5>Grams</h5></button>
+            <br><br>
+            <button id="button-1" class="btn btn-primary number" value="1"><h1>1</h1></button>
+            <button id="button-2" class="btn btn-primary number" value="2"><h1>2</h1></button>
+            <button id="button-3" class="btn btn-primary number" value="3"><h1>3</h1></button>
+            <button id="button-4" class="btn btn-primary number" value="4"><h1>4</h1></button>
+            <br><br>            
+            <button id="button-5" class="btn btn-primary number" value="5"><h1>5</h1></button>
+            <button id="button-6" class="btn btn-primary number" value="6"><h1>6</h1></button>
+            <button id="button-7" class="btn btn-primary number" value="7"><h1>7</h1></button>
+            <button id="button-8" class="btn btn-primary number" value="8"><h1>8</h1></button>
+            <br><br>
+            <button id="button-9" class="btn btn-primary number" value="9"><h1>9</h1></button>
+            <button id="button-0" class="btn btn-primary number" value="0"><h1>0</h1></button>
+            <button id="button-equal" class="btn btn-success equal" value="equals"><h1>=</h1></button>
+            <button id="button-clear" class="btn btn-dark clear" value="clear"><h1>clear</h1></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Result Panel -->
+      <div class="col-lg-6">
+        <div class="card">
+          <h3 class="card-header">Result</h3>
+          <div class="card-body">
+            <h1 id="first-number"></h1>
+            <h1 id="measuring-units"></h1>
+            <h1 id="ingredient"></h1>
+            <hr>
+            <h1 id="result"></h1>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script type="text/javascript">
+
+    $(document).ready(function() {
+
+      // Make our variables global to the runtime of our application
+      var firstNumber = 0;
+      var ingredient = 0;
+      var operator = "";
+      var result = 0;
+      var measuringUnits = 0;
+      var isMeasuringUnitChosen = false;
+      var isCalculated = false;
+
+      // Use a function to initialize our calculator.
+      // This way when the user hits clear, we can guarantee a reset of the app.
+      function initializeCalculator() {
+        firstNumber = "";
+        ingredient = "";
+        measuringUnits = ''
+        isMeasuringUnitChosen = false;
+        isCalculated = false;
+
+        $("#first-number, #ingredient, #measuring-units, #result").empty();
+      }
+
+      $(".number").on("click", function() {
+
+        // Check if we've already run a calculation, if so... we'll just.
+        if (isCalculated) {
+          return false;
+        }
+
+        // If measuring unit is chosen, we should be writing the secondNumber, otherwise, the firstNumber
+        if (isMeasuringUnitChosen) {
+          ingredient += $(this).val();
+          $("#ingredient").text(ingredient);
+
+        }
+        else {
+          firstNumber += $(this).val();
+          $("#first-number").text(firstNumber);
+        }
+
+      });
+      $(".measurement").on("click", function() {
+
+        // Check if a first number has already been selected
+        // Or we've already run a calculation, if so we just exit.
+        if (!firstNumber || isCalculated) {
+          return false;
+        }
+
+        // Set isOperatorChosen to true so we start writing to secondNumber
+        isMeasuringUnitChosen = true;
+
+        // Store off the operator
+        measuringUnits = $(this).val();
+
+        // Set the HTML of the #operator to the text of what was clicked
+        $("#measuring-units").text($(this).text());
+
+      });
+
+      $(".ingredient").on("click", function() {
+
+      // Check if a first number has already been selected
+      // Or we've already run a calculation, if so we just exit.
+      if (!firstNumber || isCalculated) {
+        return false;
+      }
+
+      // Set isOperatorChosen to true so we start writing to secondNumber
+      if (!isMeasuringUnitChosen || isCalculated){
+        return false
+      }
+
+      // Store off the operator
+      ingredient = $(this).val();
+
+      // Set the HTML of the #operator to the text of what was clicked
+      $("#ingredient").text($(this).text());
+
+      });
+
+      $(".equal").on("click", function() {
+
+        // If we already clicked equal, don't do the calculation again
+        if (isCalculated) {
+          return false;
+        }
+
+        // Set isCalculated to true so that we don't get in a weird UI state by clicking buttons again
+        isCalculated = true;
+
+        // Use parseInt to convert our string representation of numbers into actual integers
+        firstNumber = parseFloat(firstNumber);
+        ingredient = parseFloat(ingredient);
+        measuringUnits = parseFloat(measuringUnits)
+
+        // Based on the operator that was chosen.
+        // Then run the operation and set the HTML of the result of that operation
+        result = firstNumber * ingredient / measuringUnits
+
+        $("#result").text(result + " g");
+
+      });
+      $(".clear").on("click", function() {
+
+        // Call initializeCalculater so we can reset the state of our app
+        initializeCalculator();
+
+      });
+
+      // Call initializeCalculater so we can set the state of our app
+      initializeCalculator();
+    });
+
+</script>
+
+</body>
+</html>
